@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Girls Smash or Pass</title>
+    <style>
+        :root {
+            --primary: #ff6b9d;
+            --secondary: #8a63ff;
+            --text: #333;
+            --background: #f5f5f5;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --primary: #ff4d94;
+            --secondary: #a182ff;
+            --text: #f5f5f5;
+            --background: #1a1a2e;
+            --card-bg: #252541;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px var(--shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-top: 20px;
+        }
+
+        .jelly-button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 8px 20px var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .jelly-button:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 15px 25px var(--shadow);
+        }
+
+        .jelly-button:active {
+            transform: scale(0.95);
+        }
+
+        .jelly-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.5s, opacity 0.5s;
+        }
+
+        .jelly-button:active::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        #start-screen, #level-select, #game-screen, #summary-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            margin: 20px 0;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            border: 3px solid var(--primary);
+            border-radius: 50px;
+            font-size: 1.2rem;
+            width: 100%;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            color: var(--text);
+            text-align: center;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .level-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px var(--shadow);
+            width: 100%;
+        }
+
+        .profile-info {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .game-card {
+            width: 100%;
+            padding: 20px;
+            border-radius: 20px;
+            background-color: var(--card-bg);
+            box-shadow: 0 10px 30px var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .anime-image {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px var(--shadow);
+        }
+
+        .character-name {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #smash-btn {
+            background: linear-gradient(45deg, #44bd32, #009432);
+        }
+
+        #pass-btn {
+            background: linear-gradient(45deg, #e84118, #c23616);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px var(--shadow);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .timer-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .timer {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background-color: var(--card-bg);
+            box-shadow: 0 5px 15px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            transition: height 1s linear;
+        }
+
+        .timer-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: var(--card-bg);
+            display: flex;
+            padding: 5px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .toggle-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            transition: transform 0.3s ease;
+        }
+
+        .dark-mode .toggle-circle {
+            transform: translateX(20px);
+        }
+
+        .summary-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px var(--shadow);
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .summary-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .summary-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .summary-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .smash-badge, .pass-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: white;
+        }
+
+        .smash-badge {
+            background: linear-gradient(45deg, #44bd32, #009432);
+        }
+
+        .pass-badge {
+            background: linear-gradient(45deg, #e84118, #c23616);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .jelly-button {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
+            .anime-image {
+                height: 300px;
+            }
+            
+            .summary-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" id="theme-toggle">
+        <div class="toggle-circle"></div>
+    </div>
+
+    <div class="container">
+        <h1>Smash or Pass - Anime Girls Edition v1</h1>
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="fade-in">
+            <h2>Enter Your Username</h2>
+            <input type="text" id="username-input" placeholder="Username" maxlength="15">
+            <button class="jelly-button" id="start-btn">Start Game</button>
+        </div>
+        
+        <!-- Level Select Screen -->
+        <div id="level-select" class="hidden fade-in">
+            <div class="profile">
+                <div class="avatar" id="user-avatar"></div>
+                <div class="profile-info">
+                    <h3 id="profile-username">Username</h3>
+                    <p id="profile-stats">Stats: 0 Smash | 0 Pass</p>
+                </div>
+            </div>
+            
+            <h2>Select Number of Levels</h2>
+            <div class="level-buttons">
+                <button class="jelly-button" data-levels="10">10 Levels</button>
+                <button class="jelly-button" data-levels="20">20 Levels</button>
+                <button class="jelly-button" data-levels="30">30 Levels</button>
+            </div>
+        </div>
+        
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden fade-in">
+            <div class="profile">
+                <div class="avatar" id="game-avatar"></div>
+                <div class="profile-info">
+                    <h3 id="game-username">Username</h3>
+                    <p id="game-stats">Stats: 0 Smash | 0 Pass</p>
+                </div>
+            </div>
+            
+            <div class="game-card">
+                <div class="timer-container">
+                    <div class="timer">
+                        <div class="timer-fill" id="timer-fill"></div>
+                        <div class="timer-text" id="timer-text">20</div>
+                    </div>
+                </div>
+                
+                <img src="/api/placeholder/400/400" alt="Anime Girl" class="anime-image" id="anime-image">
+                <h3 class="character-name" id="character-name">Character Name</h3>
+                
+                <div class="button-container">
+                    <button class="jelly-button" id="smash-btn">SMASH</button>
+                    <button class="jelly-button" id="pass-btn">PASS</button>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="controls">
+                <button class="jelly-button" id="back-btn">Back to Menu</button>
+                <h3 id="level-counter">Level 1/10</h3>
+            </div>
+        </div>
+        
+        <!-- Summary Screen -->
+        <div id="summary-screen" class="hidden fade-in">
+            <div class="profile">
+                <div class="avatar" id="summary-avatar"></div>
+                <div class="profile-info">
+                    <h3 id="summary-username">Username</h3>
+                    <p id="summary-stats">Stats: 0 Smash | 0 Pass</p>
+                </div>
+            </div>
+            
+            <h2>Your Results</h2>
+            
+            <div class="stats-container">
+                <div class="stat-card">
+                    <p>Smashed</p>
+                    <div class="stat-value" id="smash-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <p>Passed</p>
+                    <div class="stat-value" id="pass-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <p>Skipped</p>
+                    <div class="stat-value" id="skip-count">0</div>
+                </div>
+            </div>
+            
+            <h3>Your Choices</h3>
+            <div class="summary-container" id="summary-container">
+                <!-- Summary cards will be added here -->
+            </div>
+            
+            <button class="jelly-button" id="restart-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            username: '',
+            totalLevels: 0,
+            currentLevel: 0,
+            smashCount: 0,
+            passCount: 0,
+            skipCount: 0,
+            choices: [],
+            timerInterval: null,
+            timeLeft: 20,
+            gameData: [
+                { name: "Anime Girl 1", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 2", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 3", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 4", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 5", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 6", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 7", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 8", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 9", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 10", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 11", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 12", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 13", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 14", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 15", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 16", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 17", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 18", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 19", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 20", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 21", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 22", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 23", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 24", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 25", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 26", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 27", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 28", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 29", image: "/api/placeholder/400/400" },
+                { name: "Anime Girl 30", image: "/api/placeholder/400/400" }
+            ]
+        };
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const levelSelect = document.getElementById('level-select');
+        const gameScreen = document.getElementById('game-screen');
+        const summaryScreen = document.getElementById('summary-screen');
+        const usernameInput = document.getElementById('username-input');
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const smashBtn = document.getElementById('smash-btn');
+        const passBtn = document.getElementById('pass-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const levelButtons = document.querySelectorAll('.level-buttons button');
+        const progressBar = document.getElementById('progress-bar');
+        const levelCounter = document.getElementById('level-counter');
+        const animeImage = document.getElementById('anime-image');
+        const characterName = document.getElementById('character-name');
+        const timerText = document.getElementById('timer-text');
+        const timerFill = document.getElementById('timer-fill');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Avatar elements
+        const userAvatar = document.getElementById('user-avatar');
+        const gameAvatar = document.getElementById('game-avatar');
+        const summaryAvatar = document.getElementById('summary-avatar');
+
+        // Username elements
+        const profileUsername = document.getElementById('profile-username');
+        const gameUsername = document.getElementById('game-username');
+        const summaryUsername = document.getElementById('summary-username');
+
+        // Stats elements
+        const profileStats = document.getElementById('profile-stats');
+        const gameStats = document.getElementById('game-stats');
+        const summaryStats = document.getElementById('summary-stats');
+        const smashCount = document.getElementById('smash-count');
+        const passCount = document.getElementById('pass-count');
+        const skipCount = document.getElementById('skip-count');
+        const summaryContainer = document.getElementById('summary-container');
+
+        // Check for saved profile
+        function loadProfile() {
+            const savedProfile = localStorage.getItem('animeGameProfile');
+            if (savedProfile) {
+                const profile = JSON.parse(savedProfile);
+                gameState.username = profile.username;
+                gameState.smashCount = profile.smashCount || 0;
+                gameState.passCount = profile.passCount || 0;
+                gameState.skipCount = profile.skipCount || 0;
+                
+                // Pre-fill username input
+                usernameInput.value = gameState.username;
+                
+                // Update profile elements
+                updateProfileDisplay();
+            }
+        }
+
+        // Save profile
+        function saveProfile() {
+            const profile = {
+                username: gameState.username,
+                smashCount: gameState.smashCount,
+                passCount: gameState.passCount,
+                skipCount: gameState.skipCount
+            };
+            localStorage.setItem('animeGameProfile', JSON.stringify(profile));
+        }
+
+        // Update profile display
+        function updateProfileDisplay() {
+            const avatarInitial = gameState.username.charAt(0).toUpperCase();
+            userAvatar.textContent = avatarInitial;
+            gameAvatar.textContent = avatarInitial;
+            summaryAvatar.textContent = avatarInitial;
+            
+            profileUsername.textContent = gameState.username;
+            gameUsername.textContent = gameState.username;
+            summaryUsername.textContent = gameState.username;
+            
+            const statsText = `Stats: ${gameState.smashCount} Smash | ${gameState.passCount} Pass`;
+            profileStats.textContent = statsText;
+            gameStats.textContent = statsText;
+            summaryStats.textContent = statsText;
+        }
+
+        // Initialize the game
+        function init() {
+            loadProfile();
+            
+            // Initialize screen transitions
+            startBtn.addEventListener('click', function() {
+                if (usernameInput.value.trim() === '') {
+                    usernameInput.style.borderColor = '#e84118';
+                    usernameInput.classList.add('pulse');
+                    setTimeout(() => {
+                        usernameInput.classList.remove('pulse');
+                    }, 2000);
+                    return;
+                }
+                
+                gameState.username = usernameInput.value.trim();
+                updateProfileDisplay();
+                saveProfile();
+                
+                startScreen.classList.add('hidden');
+                levelSelect.classList.remove('hidden');
+            });
+            
+            // Level selection
+            levelButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    gameState.totalLevels = parseInt(this.getAttribute('data-levels'));
+                    gameState.currentLevel = 0;
+                    gameState.choices = [];
+                    
+                    levelSelect.classList.add('hidden');
+                    gameScreen.classList.remove('hidden');
+                    
+                    startLevel();
+                });
+            });
+            
+            // Game controls
+            smashBtn.addEventListener('click', function() {
+                makeChoice('smash');
+            });
+            
+            passBtn.addEventListener('click', function() {
+                makeChoice('pass');
+            });
+            
+            backBtn.addEventListener('click', function() {
+                clearInterval(gameState.timerInterval);
+                gameScreen.classList.add('hidden');
+                levelSelect.classList.remove('hidden');
+            });
+            
+            restartBtn.addEventListener('click', function() {
+                summaryScreen.classList.add('hidden');
+                levelSelect.classList.remove('hidden');
+            });
+            
+            // Theme toggle
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            });
+            
+            // Check saved theme preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
+        // Start a new level
+        function startLevel() {
+            gameState.currentLevel++;
+            
+            if (gameState.currentLevel > gameState.totalLevels) {
+                showSummary();
+                return;
+            }
+            
+            // Update UI
+            progressBar.style.width = `${(gameState.currentLevel - 1) / gameState.totalLevels * 100}%`;
+            levelCounter.textContent = `Level ${gameState.currentLevel}/${gameState.totalLevels}`;
+            
+            // Show current character
+            const characterIndex = gameState.currentLevel - 1;
+            characterName.textContent = gameState.gameData[characterIndex].name;
+            animeImage.src = gameState.gameData[characterIndex].image;
+            
+            // Reset and start timer
+            resetTimer();
+        }
+
+        // Make a choice (smash or pass)
+        function makeChoice(choice) {
+            clearInterval(gameState.timerInterval);
+            
+            const characterIndex = gameState.currentLevel - 1;
+            const character = gameState.gameData[characterIndex];
+            
+            // Record choice
+            gameState.choices.push({
+                character: character,
+                choice: choice
+            });
+            
+            // Update stats
+            if (choice === 'smash') {
+                gameState.smashCount++;
+            } else {
+                gameState.passCount++;
+            }
+            
+            // Update profile display
+            updateProfileDisplay();
+            saveProfile();
+            
+            // Button animation
+            const button = choice === 'smash' ? smashBtn : passBtn;
+            button.classList.add('pulse');
+            setTimeout(() => {
+                button.classList.remove('pulse');
+                startLevel();
+            }, 500);
+        }
+
+        // Skip current level (timer expired)
+        function skipLevel() {
+            const characterIndex = gameState.currentLevel - 1;
+            const character = gameState.gameData[characterIndex];
+            
+            // Record skip
+            gameState.choices.push({
+                character: character,
+                choice: 'skip'
+            });
+            
+            gameState.skipCount++;
+            
+            // Update profile
+            updateProfileDisplay();
+            saveProfile();
+            
+            startLevel();
+        }
+
+        // Reset and start timer
+        function resetTimer() {
+            clearInterval(gameState.timerInterval);
+            gameState.timeLeft = 20;
+            timerText.textContent = gameState.timeLeft;
+            timerFill.style.height = '0%';
+            
+            gameState.timerInterval = setInterval(function() {
+                gameState.timeLeft--;
+                timerText.textContent = gameState.timeLeft;
+                timerFill.style.height = `${(20 - gameState.timeLeft) * 5}%`;
+                
+                if (gameState.timeLeft <= 5) {
+                    timerText.style.color = '#e84118';
+                } else {
+                    timerText.style.color = 'var(--text)';
+                }
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    skipLevel();
+                }
+            }, 1000);
+        }
+
+        // Show summary screen
+        function showSummary() {
+            clearInterval(gameState.timerInterval);
+            
+            gameScreen.classList.add('hidden');
+            summaryScreen.classList.remove('hidden');
+            
+            // Update stats
+            smashCount.textContent = gameState.smashCount;
+            passCount.textContent = gameState.passCount;
+            skipCount.textContent = gameState.skipCount;
+            
+            // Clear previous summary
+            summaryContainer.innerHTML = '';
+            
+            // Add summary cards
+            gameState.choices.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'summary-card fade-in';
+                
+                let badgeClass = '';
+                let badgeText = '';
+                
+                if (item.choice === 'smash') {
+                    badgeClass = 'smash-badge';
+                    badgeText = 'SMASH';
+                } else if (item.choice === 'pass') {
+                    badgeClass = 'pass-badge';
+                    badgeText = 'PASS';
+                } else {
+                    badgeClass = 'pass-badge';
+                    badgeText = 'SKIP';
+                }
+                
+                card.innerHTML = `
+                    <img src="${item.character.image}" class="summary-image" alt="${item.character.name}">
+                    <div class="summary-info">
+                        <h3>${item.character.name}</h3>
+                        <div class="${badgeClass}">${badgeText}</div>
+                    </div>
+                `;
+                
+                summaryContainer.appendChild(card);
+            });
+        }
+
+        // Initialize the game
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

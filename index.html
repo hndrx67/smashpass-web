@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smash or Pass Game</title>
+    <style>
+        :root {
+            --primary: #ff4d8f;
+            --secondary: #4d79ff;
+            --background: #f5f5f5;
+            --text: #333;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        .welcome-screen, .genre-selection, .level-selection, .game-screen, .result-screen {
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .hidden {
+            transform: translateY(30px);
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+        }
+
+        .visible {
+            transform: translateY(0);
+            opacity: 1;
+            position: relative;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            text-align: center;
+        }
+
+        .welcome-screen h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .welcome-screen p {
+            margin-bottom: 30px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Genre Selection */
+        .genre-selection h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .genre-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .genre-option {
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .genre-option:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .genre-option.selected {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .genre-option img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Level Selection */
+        .level-selection h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .level-option {
+            background-color: white;
+            border: 2px solid var(--secondary);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .level-option:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .level-option.selected {
+            background-color: var(--secondary);
+            color: white;
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .level-option h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        /* Game Screen */
+        .game-screen h2 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .choices-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .choice {
+            flex: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .choice:hover {
+            transform: translateY(-5px) scale(1.03);
+        }
+
+        .choice img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .choice img:hover {
+            transform: scale(1.05);
+        }
+
+        .buttons-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .smash-btn, .pass-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .smash-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .pass-btn {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .smash-btn:hover, .pass-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .smash-btn:active, .pass-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            text-align: center;
+        }
+
+        .result-screen h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            width: 45%;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .stat-box h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-box p {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+
+        /* Jelly Animation */
+        @keyframes jelly {
+            0%, 100% { transform: scale(1, 1); }
+            25% { transform: scale(0.95, 1.05); }
+            50% { transform: scale(1.05, 0.95); }
+            75% { transform: scale(0.98, 1.02); }
+        }
+
+        .jelly-effect {
+            animation: jelly 0.5s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .choices-container {
+                flex-direction: column;
+            }
+
+            .choice img {
+                height: 200px;
+            }
+
+            .level-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smash or Pass</h1>
+
+        <!-- Welcome Screen -->
+        <div class="welcome-screen visible" id="welcomeScreen">
+            <h2>Welcome to Smash or Pass!</h2>
+            <p>Choose your preferences and see how many levels you can complete. React to images with "Smash" or "Pass" and track your progress!</p>
+            <button class="btn" id="startBtn">Get Started</button>
+        </div>
+
+        <!-- Genre Selection -->
+        <div class="genre-selection hidden" id="genreScreen">
+            <h2>Select a Genre</h2>
+            <div class="genre-grid">
+                <div class="genre-option" data-genre="anime">
+                    <img src="/api/placeholder/150/100" alt="Anime Girls">
+                    <h3>Anime</h3>
+                </div>
+                <div class="genre-option" data-genre="celebrities">
+                    <img src="/api/placeholder/150/100" alt="Celebrities">
+                    <h3>Celebrities</h3>
+                </div>
+                <div class="genre-option" data-genre="models">
+                    <img src="/api/placeholder/150/100" alt="Models">
+                    <h3>Models</h3>
+                </div>
+                <div class="genre-option" data-genre="fictional">
+                    <img src="/api/placeholder/150/100" alt="Fictional Characters">
+                    <h3>Fictional</h3>
+                </div>
+            </div>
+            <button class="btn" id="genreNextBtn">Next</button>
+        </div>
+
+        <!-- Level Selection -->
+        <div class="level-selection hidden" id="levelScreen">
+            <h2>How Many Levels?</h2>
+            <div class="level-grid">
+                <div class="level-option" data-levels="10">
+                    <h3>10</h3>
+                    <p>Quick Game</p>
+                </div>
+                <div class="level-option" data-levels="20">
+                    <h3>20</h3>
+                    <p>Standard Game</p>
+                </div>
+                <div class="level-option" data-levels="30">
+                    <h3>30</h3>
+                    <p>Extended Game</p>
+                </div>
+            </div>
+            <button class="btn" id="startGameBtn">Start Game</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen hidden" id="gameScreen">
+            <h2>Level <span id="currentLevel">1</span></h2>
+            <div class="choices-container">
+                <div class="choice" id="choice1">
+                    <img src="/api/placeholder/350/300" alt="Option 1">
+                </div>
+                <div class="choice" id="choice2">
+                    <img src="/api/placeholder/350/300" alt="Option 2">
+                </div>
+            </div>
+            <div class="buttons-row">
+                <button class="smash-btn" id="smashBtn">CHOOSE</button>
+                <button class="pass-btn" id="passBtn">CHOOSE</button>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text">
+                <span id="progressText">Level 1 of 10</span>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div class="result-screen hidden" id="resultScreen">
+            <h2>Game Complete!</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <h3>Smash</h3>
+                    <p id="smashCount">0</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Pass</h3>
+                    <p id="passCount">0</p>
+                </div>
+            </div>
+            <button class="btn" id="playAgainBtn">Play Again</button>
+            <button class="btn btn-secondary" id="changeSettingsBtn">Change Settings</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const genreScreen = document.getElementById('genreScreen');
+        const levelScreen = document.getElementById('levelScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        
+        const startBtn = document.getElementById('startBtn');
+        const genreNextBtn = document.getElementById('genreNextBtn');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const smashBtn = document.getElementById('smashBtn');
+        const passBtn = document.getElementById('passBtn');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const changeSettingsBtn = document.getElementById('changeSettingsBtn');
+        
+        const genreOptions = document.querySelectorAll('.genre-option');
+        const levelOptions = document.querySelectorAll('.level-option');
+        const currentLevelEl = document.getElementById('currentLevel');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const smashCount = document.getElementById('smashCount');
+        const passCount = document.getElementById('passCount');
+        const choice1 = document.getElementById('choice1');
+        const choice2 = document.getElementById('choice2');
+
+        // Game state
+        let selectedGenre = '';
+        let totalLevels = 10;
+        let currentLevel = 1;
+        let smashes = 0;
+        let passes = 0;
+        
+        // Image placeholder URLs for different genres (would be replaced with real APIs)
+        const genreImages = {
+            anime: [
+                "/api/placeholder/350/300?text=Anime+1",
+                "/api/placeholder/350/300?text=Anime+2",
+                "/api/placeholder/350/300?text=Anime+3",
+                "/api/placeholder/350/300?text=Anime+4",
+                "/api/placeholder/350/300?text=Anime+5",
+                "/api/placeholder/350/300?text=Anime+6",
+                "/api/placeholder/350/300?text=Anime+7",
+                "/api/placeholder/350/300?text=Anime+8"
+            ],
+            celebrities: [
+                "/api/placeholder/350/300?text=Celebrity+1",
+                "/api/placeholder/350/300?text=Celebrity+2",
+                "/api/placeholder/350/300?text=Celebrity+3",
+                "/api/placeholder/350/300?text=Celebrity+4",
+                "/api/placeholder/350/300?text=Celebrity+5",
+                "/api/placeholder/350/300?text=Celebrity+6",
+                "/api/placeholder/350/300?text=Celebrity+7",
+                "/api/placeholder/350/300?text=Celebrity+8"
+            ],
+            models: [
+                "/api/placeholder/350/300?text=Model+1",
+                "/api/placeholder/350/300?text=Model+2",
+                "/api/placeholder/350/300?text=Model+3",
+                "/api/placeholder/350/300?text=Model+4",
+                "/api/placeholder/350/300?text=Model+5",
+                "/api/placeholder/350/300?text=Model+6",
+                "/api/placeholder/350/300?text=Model+7",
+                "/api/placeholder/350/300?text=Model+8"
+            ],
+            fictional: [
+                "/api/placeholder/350/300?text=Character+1",
+                "/api/placeholder/350/300?text=Character+2",
+                "/api/placeholder/350/300?text=Character+3",
+                "/api/placeholder/350/300?text=Character+4",
+                "/api/placeholder/350/300?text=Character+5",
+                "/api/placeholder/350/300?text=Character+6",
+                "/api/placeholder/350/300?text=Character+7",
+                "/api/placeholder/350/300?text=Character+8"
+            ]
+        };
+
+        // Helper Functions
+        function switchScreen(hideScreen, showScreen) {
+            hideScreen.classList.remove('visible');
+            hideScreen.classList.add('hidden');
+            
+            setTimeout(() => {
+                showScreen.classList.remove('hidden');
+                showScreen.classList.add('visible');
+                showScreen.classList.add('jelly-effect');
+                setTimeout(() => showScreen.classList.remove('jelly-effect'), 500);
+            }, 300);
+        }
+
+        function getRandomImage(genre) {
+            const images = genreImages[genre];
+            return images[Math.floor(Math.random() * images.length)];
+        }
+
+        function updateProgress() {
+            const percentage = ((currentLevel - 1) / totalLevels) * 100;
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `Level ${currentLevel} of ${totalLevels}`;
+            currentLevelEl.textContent = currentLevel;
+        }
+
+        function loadNewImages() {
+            const img1 = getRandomImage(selectedGenre);
+            let img2 = getRandomImage(selectedGenre);
+            
+            // Make sure we don't get the same image twice
+            while (img2 === img1) {
+                img2 = getRandomImage(selectedGenre);
+            }
+            
+            choice1.querySelector('img').src = img1;
+            choice2.querySelector('img').src = img2;
+            
+            // Add jelly effect to choices
+            choice1.classList.add('jelly-effect');
+            choice2.classList.add('jelly-effect');
+            
+            setTimeout(() => {
+                choice1.classList.remove('jelly-effect');
+                choice2.classList.remove('jelly-effect');
+            }, 500);
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            
+            if (currentLevel > totalLevels) {
+                // Game completed
+                smashCount.textContent = smashes;
+                passCount.textContent = passes;
+                switchScreen(gameScreen, resultScreen);
+            } else {
+                updateProgress();
+                loadNewImages();
+            }
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => {
+            switchScreen(welcomeScreen, genreScreen);
+        });
+
+        genreOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove selected class from all options
+                genreOptions.forEach(opt => opt.classList.remove('selected'));
+                // Add selected class to clicked option
+                option.classList.add('selected');
+                selectedGenre = option.dataset.genre;
+            });
+        });
+
+        genreNextBtn.addEventListener('click', () => {
+            if (!selectedGenre) {
+                alert('Please select a genre to continue!');
+                return;
+            }
+            switchScreen(genreScreen, levelScreen);
+        });
+
+        levelOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove selected class from all options
+                levelOptions.forEach(opt => opt.classList.remove('selected'));
+                // Add selected class to clicked option
+                option.classList.add('selected');
+                totalLevels = parseInt(option.dataset.levels);
+            });
+        });
+
+        startGameBtn.addEventListener('click', () => {
+            // Set default level if none selected
+            if (!document.querySelector('.level-option.selected')) {
+                levelOptions[0].classList.add('selected');
+                totalLevels = parseInt(levelOptions[0].dataset.levels);
+            }
+            
+            currentLevel = 1;
+            smashes = 0;
+            passes = 0;
+            updateProgress();
+            loadNewImages();
+            switchScreen(levelScreen, gameScreen);
+        });
+
+        smashBtn.addEventListener('click', () => {
+            smashBtn.classList.add('jelly-effect');
+            setTimeout(() => smashBtn.classList.remove('jelly-effect'), 500);
+            smashes++;
+            nextLevel();
+        });
+
+        passBtn.addEventListener('click', () => {
+            passBtn.classList.add('jelly-effect');
+            setTimeout(() => passBtn.classList.remove('jelly-effect'), 500);
+            passes++;
+            nextLevel();
+        });
+
+        playAgainBtn.addEventListener('click', () => {
+            currentLevel = 1;
+            smashes = 0;
+            passes = 0;
+            updateProgress();
+            loadNewImages();
+            switchScreen(resultScreen, gameScreen);
+        });
+
+        changeSettingsBtn.addEventListener('click', () => {
+            switchScreen(resultScreen, genreScreen);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Girls Smash or Pass</title>
+    <style>
+        :root {
+            --primary: #ff69b4;
+            --secondary: #9370db;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+            --bg-light: #f8f9fa;
+            --bg-dark: #212529;
+            --accent: #00c6ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        body.dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        /* Jelly Animation Classes */
+        .jelly {
+            animation: jelly 0.5s;
+        }
+
+        @keyframes jelly {
+            0%, 100% { transform: scale(1, 1); }
+            25% { transform: scale(1.1, 0.9); }
+            50% { transform: scale(0.9, 1.1); }
+            75% { transform: scale(1.05, 0.95); }
+        }
+
+        /* Profile Section */
+        .profile {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 0 0 15px 0;
+            padding: 15px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .profile:hover {
+            transform: translateY(5px);
+        }
+
+        .profile-content {
+            display: none;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            background-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 20;
+            min-width: 250px;
+            color: var(--text-dark);
+        }
+
+        .dark-mode .profile-content {
+            background-color: #333;
+            color: var(--text-light);
+        }
+
+        .profile.active .profile-content {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .dark-mode .theme-toggle {
+            color: var(--text-light);
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            text-align: center;
+        }
+
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Username Screen */
+        #username-screen input {
+            padding: 15px;
+            border-radius: 30px;
+            border: 2px solid var(--primary);
+            font-size: 1.2rem;
+            margin: 20px 0;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #username-screen input:focus {
+            box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.3);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+        }
+
+        .btn:active::after {
+            animation: ripple 0.6s;
+        }
+
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+            100% {
+                width: 500px;
+                height: 500px;
+                opacity: 0;
+            }
+        }
+
+        /* Level selection */
+        .level-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .level-options button {
+            margin: 10px;
+        }
+
+        /* Game Screen */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .anime-image-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .anime-image-container:hover {
+            transform: scale(1.02);
+        }
+
+        .anime-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-smash, .btn-pass {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .btn-smash {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        }
+
+        .btn-pass {
+            background: linear-gradient(45deg, #4b6cb7, #182848);
+        }
+
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 30px auto 10px;
+            background-color: #e0e0e0;
+            border-radius: 30px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress-container {
+            background-color: #444;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .dark-mode .progress-text {
+            color: var(--text-light);
+        }
+
+        /* Timer */
+        .timer {
+            margin: 10px 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Back button */
+        .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .dark-mode .back-btn {
+            color: var(--text-light);
+        }
+
+        /* Summary Screen */
+        .summary-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stats {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .dark-mode .stats {
+            background-color: #333;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .dark-mode .card {
+            background-color: #333;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .card-footer {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .smash-tag {
+            background-color: #ff416c;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .pass-tag {
+            background-color: #4b6cb7;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            
+            .profile {
+                padding: 10px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="profile">
+                <div class="profile-label">Profile</div>
+                <div class="profile-content">
+                    <h3 id="profile-username">Username</h3>
+                    <p>Games Played: <span id="profile-games">0</span></p>
+                    <div id="profile-statistics">
+                        <p>Total Smash: <span id="profile-smash">0</span></p>
+                        <p>Total Pass: <span id="profile-pass">0</span></p>
+                    </div>
+                </div>
+            </div>
+            <h1 class="title">Anime Girls Smash or Pass</h1>
+            <button class="theme-toggle">🌓</button>
+        </header>
+
+        <!-- Username Screen -->
+        <div id="username-screen" class="screen active">
+            <h2>Choose Your Username</h2>
+            <input type="text" id="username-input" placeholder="Enter your username" maxlength="15">
+            <button id="start-btn" class="btn jelly">Start Game</button>
+        </div>
+
+        <!-- Level Selection Screen -->
+        <div id="level-screen" class="screen">
+            <h2>Select Level Count</h2>
+            <div class="level-options">
+                <button class="btn level-btn" data-levels="10">10 Levels</button>
+                <button class="btn level-btn" data-levels="20">20 Levels</button>
+                <button class="btn level-btn" data-levels="30">30 Levels</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <button class="back-btn">←</button>
+            <div class="timer">20</div>
+            <div class="game-container">
+                <div class="anime-image-container">
+                    <img class="anime-image" src="/api/placeholder/500/400" alt="Anime Girl">
+                </div>
+                <div class="controls">
+                    <button class="btn btn-pass">PASS</button>
+                    <button class="btn btn-smash">SMASH</button>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="progress-text">Level 1 / 10</div>
+        </div>
+
+        <!-- Summary Screen -->
+        <div id="summary-screen" class="screen">
+            <h2>Game Summary</h2>
+            <div class="summary-container">
+                <div class="stats">
+                    <h3>Statistics</h3>
+                    <p>Total Levels: <span id="summary-levels">0</span></p>
+                    <p>Smash Count: <span id="summary-smash">0</span></p>
+                    <p>Pass Count: <span id="summary-pass">0</span></p>
+                    <p>Smash Rate: <span id="summary-rate">0%</span></p>
+                </div>
+                <h3>Your Choices</h3>
+                <div class="cards-grid" id="summary-cards">
+                    <!-- Cards will be inserted here -->
+                </div>
+                <button class="btn" id="play-again-btn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const usernameScreen = document.getElementById('username-screen');
+            const levelScreen = document.getElementById('level-screen');
+            const gameScreen = document.getElementById('game-screen');
+            const summaryScreen = document.getElementById('summary-screen');
+            
+            const usernameInput = document.getElementById('username-input');
+            const startBtn = document.getElementById('start-btn');
+            const levelBtns = document.querySelectorAll('.level-btn');
+            const backBtn = document.querySelector('.back-btn');
+            const playAgainBtn = document.getElementById('play-again-btn');
+            
+            const profileElem = document.querySelector('.profile');
+            const profileUsernameElem = document.getElementById('profile-username');
+            const profileGamesElem = document.getElementById('profile-games');
+            const profileSmashElem = document.getElementById('profile-smash');
+            const profilePassElem = document.getElementById('profile-pass');
+            
+            const themeToggleBtn = document.querySelector('.theme-toggle');
+            
+            const animeImage = document.querySelector('.anime-image');
+            const btnSmash = document.querySelector('.btn-smash');
+            const btnPass = document.querySelector('.btn-pass');
+            
+            const progressBar = document.querySelector('.progress-bar');
+            const progressText = document.querySelector('.progress-text');
+            const timerElem = document.querySelector('.timer');
+            
+            const summaryLevelsElem = document.getElementById('summary-levels');
+            const summarySmashElem = document.getElementById('summary-smash');
+            const summaryPassElem = document.getElementById('summary-pass');
+            const summaryRateElem = document.getElementById('summary-rate');
+            const summaryCardsElem = document.getElementById('summary-cards');
+            
+            // Game State
+            let state = {
+                username: '',
+                totalLevels: 0,
+                currentLevel: 1,
+                smashCount: 0,
+                passCount: 0,
+                choices: [],
+                timerInterval: null,
+                timeLeft: 20,
+                darkMode: false
+            };
+            
+            // Profile Data
+            let profileData = {
+                username: '',
+                gamesPlayed: 0,
+                totalSmash: 0,
+                totalPass: 0
+            };
+            
+            // Sample anime images (replace with your local sources)
+            const animeImages = [
+                "/api/placeholder/500/400?text=Anime+Girl+1",
+                "/api/placeholder/500/400?text=Anime+Girl+2",
+                "/api/placeholder/500/400?text=Anime+Girl+3",
+                "/api/placeholder/500/400?text=Anime+Girl+4",
+                "/api/placeholder/500/400?text=Anime+Girl+5",
+                "/api/placeholder/500/400?text=Anime+Girl+6",
+                "/api/placeholder/500/400?text=Anime+Girl+7",
+                "/api/placeholder/500/400?text=Anime+Girl+8",
+                "/api/placeholder/500/400?text=Anime+Girl+9",
+                "/api/placeholder/500/400?text=Anime+Girl+10",
+                "/api/placeholder/500/400?text=Anime+Girl+11",
+                "/api/placeholder/500/400?text=Anime+Girl+12",
+                "/api/placeholder/500/400?text=Anime+Girl+13",
+                "/api/placeholder/500/400?text=Anime+Girl+14",
+                "/api/placeholder/500/400?text=Anime+Girl+15",
+                "/api/placeholder/500/400?text=Anime+Girl+16",
+                "/api/placeholder/500/400?text=Anime+Girl+17",
+                "/api/placeholder/500/400?text=Anime+Girl+18",
+                "/api/placeholder/500/400?text=Anime+Girl+19",
+                "/api/placeholder/500/400?text=Anime+Girl+20",
+                "/api/placeholder/500/400?text=Anime+Girl+21",
+                "/api/placeholder/500/400?text=Anime+Girl+22",
+                "/api/placeholder/500/400?text=Anime+Girl+23",
+                "/api/placeholder/500/400?text=Anime+Girl+24",
+                "/api/placeholder/500/400?text=Anime+Girl+25",
+                "/api/placeholder/500/400?text=Anime+Girl+26",
+                "/api/placeholder/500/400?text=Anime+Girl+27",
+                "/api/placeholder/500/400?text=Anime+Girl+28",
+                "/api/placeholder/500/400?text=Anime+Girl+29",
+                "/api/placeholder/500/400?text=Anime+Girl+30"
+            ];
+            
+            // Load profile data from localStorage
+            function loadProfileData() {
+                const savedData = localStorage.getItem('animeSmashPassProfile');
+                if (savedData) {
+                    profileData = JSON.parse(savedData);
+                    updateProfileDisplay();
+                }
+            }
+            
+            // Save profile data to localStorage
+            function saveProfileData() {
+                localStorage.setItem('animeSmashPassProfile', JSON.stringify(profileData));
+            }
+            
+            // Update profile display
+            function updateProfileDisplay() {
+                profileUsernameElem.textContent = profileData.username;
+                profileGamesElem.textContent = profileData.gamesPlayed;
+                profileSmashElem.textContent = profileData.totalSmash;
+                profilePassElem.textContent = profileData.totalPass;
+            }
+            
+            // Profile toggle
+            profileElem.addEventListener('click', function() {
+                this.classList.toggle('active');
+                applyJellyEffect(this);
+            });
+            
+            // Theme toggle
+            themeToggleBtn.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                state.darkMode = document.body.classList.contains('dark-mode');
+                applyJellyEffect(this);
+                
+                // Save theme preference
+                localStorage.setItem('animeSmashPassDarkMode', state.darkMode);
+            });
+            
+            // Load theme preference
+            function loadThemePreference() {
+                const isDarkMode = localStorage.getItem('animeSmashPassDarkMode') === 'true';
+                if (isDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    state.darkMode = true;
+                }
+            }
+            
+            // Apply jelly animation effect to buttons
+            function applyJellyEffect(element) {
+                element.classList.remove('jelly');
+                // Trigger reflow
+                void element.offsetWidth;
+                element.classList.add('jelly');
+            }
+            
+            // Show a specific screen and hide others
+            function showScreen(screenId) {
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.getElementById(screenId).classList.add('active');
+            }
+            
+            // Start button click
+            startBtn.addEventListener('click', function() {
+                const username = usernameInput.value.trim();
+                if (username) {
+                    state.username = username;
+                    profileData.username = username;
+                    updateProfileDisplay();
+                    saveProfileData();
+                    showScreen('level-screen');
+                    applyJellyEffect(this);
+                } else {
+                    // Shake the input field if empty
+                    usernameInput.classList.add('jelly');
+                    setTimeout(() => usernameInput.classList.remove('jelly'), 500);
+                }
+            });
+            
+            // Level selection
+            levelBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const levels = parseInt(this.getAttribute('data-levels'));
+                    state.totalLevels = levels;
+                    state.currentLevel = 1;
+                    state.smashCount = 0;
+                    state.passCount = 0;
+                    state.choices = [];
+                    
+                    // Update progress display
+                    updateProgressDisplay();
+                    
+                    // Start the game
+                    showScreen('game-screen');
+                    startLevel();
+                    applyJellyEffect(this);
+                });
+            });
+            
+            // Back button click
+            backBtn.addEventListener('click', function() {
+                clearInterval(state.timerInterval);
+                showScreen('level-screen');
+                applyJellyEffect(this);
+            });
+            
+            // Play again button click
+            playAgainBtn.addEventListener('click', function() {
+                showScreen('level-screen');
+                applyJellyEffect(this);
+            });
+            
+            // Smash button click
+            btnSmash.addEventListener('click', function() {
+                makeChoice('smash');
+                applyJellyEffect(this);
+            });
+            
+            // Pass button click
+            btnPass.addEventListener('click', function() {
+                makeChoice('pass');
+                applyJellyEffect(this);
+            });
+            
+            // Make a choice (smash or pass)
+            function makeChoice(choice) {
+                clearInterval(state.timerInterval);
+                
+                // Record the choice
+                state.choices.push({
+                    level: state.currentLevel,
+                    image: animeImage.src,
+                    choice: choice
+                });
+                
+                // Update counts
+                if (choice === 'smash') {
+                    state.smashCount++;
+                } else {
+                    state.passCount++;
+                }
+                
+                // Move to next level or end game
+                if (state.currentLevel < state.totalLevels) {
+                    state.currentLevel++;
+                    updateProgressDisplay();
+                    startLevel();
+                } else {
+                    endGame();
+                }
+            }
+            
+            // Start a level
+            function startLevel() {
+                // Set new image
+                const imageIndex = (state.currentLevel - 1) % animeImages.length;
+                animeImage.src = animeImages[imageIndex];
+                
+                // Reset timer
+                state.timeLeft = 20;
+                updateTimerDisplay();
+                
+                // Start timer
+                state.timerInterval = setInterval(function() {
+                    state.timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (state.timeLeft <= 0) {
+                        clearInterval(state.timerInterval);
+                        makeChoice('pass'); // Auto-pass when timer expires
+                    }
+                }, 1000);
+            }
+            
+            // Update progress display
+            function updateProgressDisplay() {
+                const progressPercent = ((state.currentLevel - 1) / state.totalLevels) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+                progressText.textContent = `Level ${state.currentLevel} / ${state.totalLevels}`;
+            }
+            
+            // Update timer display
+            function updateTimerDisplay() {
+                timerElem.textContent = state.timeLeft;
+                
+                // Add warning color when time is running low
+                if (state.timeLeft <= 5) {
+                    timerElem.style.color = '#ff4b2b';
+                } else {
+                    timerElem.style.color = 'var(--primary)';
+                }
+            }
+            
+            // End the game and show summary
+            function endGame() {
+                // Update profile statistics
+                profileData.gamesPlayed++;
+                profileData.totalSmash += state.smashCount;
+                profileData.totalPass += state.passCount;
+                saveProfileData();
+                updateProfileDisplay();
+                
+                // Update summary screen
+                summaryLevelsElem.textContent = state.totalLevels;
+                summarySmashElem.textContent = state.smashCount;
+                summaryPassElem.textContent = state.passCount;
+                
+                const smashRate = Math.round((state.smashCount / state.totalLevels) * 100);
+                summaryRateElem.textContent = `${smashRate}%`;
+                
+                // Generate choice cards
+                generateChoiceCards();
+                
+                // Show summary screen
+                showScreen('summary-screen');
+            }
+            
+            // Generate choice cards for summary
+            function generateChoiceCards() {
+                summaryCardsElem.innerHTML = '';
+                
+                state.choices.forEach(choice => {
+                    const card = document.createElement('div');
+                    card.className = 'card jelly';
+                    
+                    const img = document.createElement('img');
+                    img.src = choice.image;
+                    img.alt = `Level ${choice.level}`;
+                    
+                    const footer = document.createElement('div');
+                    footer.className = 'card-footer';
+                    
+                    const tag = document.createElement('span');
+                    tag.className = choice.choice === 'smash' ? 'smash-tag' : 'pass-tag';
+                    tag.textContent = choice.choice.toUpperCase();
+                    
+                    footer.appendChild(tag);
+                    card.appendChild(img);
+                    card.appendChild(footer);
+                    
+                    summaryCardsElem.appendChild(card);
+                });
+            }
+            
+            // Initialize the game
+            function init() {
+                loadThemePreference();
+                loadProfileData();
+                
+                // Focus username input
+                usernameInput.focus();
+                
+                // Apply initial jelly effects to buttons
+                document.querySelectorAll('.btn').forEach(btn => {
+                    btn.classList.add('jelly');
+                });
+            }
+            
+            // Start the game
+            init();
+        });
+    </script>
+</body>
+</html>
